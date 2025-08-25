@@ -19,8 +19,8 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_heading(
         'local_dav_info',
         get_string('wherefiles_title', 'local_dav'),
-        get_string('wherefiles_desc', 'local_dav', (object)[
-            'web' => new moodle_url('/local/dav/index.php'),
+        get_string('wherefiles_desc', 'local_dav', [
+            'web' => ('/local/dav/index.php'),
         ])
     ));
 
