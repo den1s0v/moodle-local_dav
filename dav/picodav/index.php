@@ -1906,7 +1906,7 @@ namespace PicoDAV
 			$out = parent::html_directory($uri, $list);
 
 			if (null !== $out) {
-				$out = str_replace('<body>', sprintf('<body style="opacity: 0.8"><script type="text/javascript" src="%s/.webdav/webdav.js"></script>', rtrim($this->base_uri, '/')), $out);
+				$out = str_replace('<body>', sprintf('<body style="opacity: 0.8"><script type="text/javascript" src="%s/_webdav/webdav.js"></script>', rtrim($this->base_uri, '/')), $out);
 			}
 
 			return $out;
@@ -2023,10 +2023,18 @@ RewriteRule ^.*$ /index.php [END]
 '));
 	}
 
-	if ($relative_uri == '.webdav/webdav.js' || $relative_uri == '.webdav/webdav.css') {
+	if ($relative_uri == '_webdav/webdav.js' || $relative_uri == '_webdav/webdav.css' 
+		// || $relative_uri[strlen($relative_uri)-1] != '/'  /// 
+	) {
+		// ///
+		// echo '<br>';
+		// echo $relative_uri;
+		// echo '<br>';
+		// ///
+
 		http_response_code(200);
 
-		if ($relative_uri == '.webdav/webdav.js') {
+		if ($relative_uri == '_webdav/webdav.js') {
 			header('Content-Type: text/javascript', true);
 		}
 		else {
@@ -2041,14 +2049,14 @@ RewriteRule ^.*$ /index.php [END]
 
 		$fp = fopen(__FILE__, 'r');
 
-		if ($relative_uri == '.webdav/webdav.js') {
-			$L = 58697;
+		$L = 56580;  // Начало контента js после кода php!!! Нужно выставить при изменени длины этого текста!!! 
+		if ($relative_uri == '_webdav/webdav.js') {
 			fseek($fp, $L, SEEK_SET);
 			echo fread($fp, 27891);
 		}
 		else {
 			fseek($fp, $L + 27891, SEEK_SET);
-			echo fread($fp, 7004);
+			echo fread($fp, 7006);
 		}
 
 		fclose($fp);
@@ -2056,8 +2064,7 @@ RewriteRule ^.*$ /index.php [END]
 		exit;
 	}
 
-	// $config_file = $self_dir . '/.picodav.ini';
-	define('PicoDAV\INTERNAL_FILES', ['.picodav.ini', $self_dir, '.webdav/webdav.js', '.webdav/webdav.css']);
+	define('PicoDAV\INTERNAL_FILES', ['.picodav.ini', $self_dir, '_webdav/webdav.js', '_webdav/webdav.css']);
 
 	const DEFAULT_CONFIG = [
 		'ANONYMOUS_READ' => true,
