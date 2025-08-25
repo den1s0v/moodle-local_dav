@@ -10,26 +10,20 @@ require_once(__DIR__ . '/lib.php');
 $inipath = local_dav_sync_ini_from_config();
 
 // На всякий случай подготовим дефолтный storage, если админ не указал ROOT.
-local_dav_default_storage_dir();
+$storagedir = local_dav_default_storage_dir();
 
 /**
- * >>> ЗДЕСЬ ВСТАВИТЕ ПОДКЛЮЧЕНИЕ PicoDAV <<<
- *
- * Рекомендуемый подход интеграции:
- *  - Кладёте PicoDAV (ваш форк) в local/dav/picodav/index.php
- *  - В нём добавляете поддержку чтения ini из пути, передаваемого через константу
+ * ПОДКЛЮЧЕНИЕ PicoDAV 
+ * добавляем поддержку чтения ini из пути, передаваемого через константу
  *      define('LOCAL_DAV_INI_PATH', $inipath);
- *    или через переменную окружения.
- *  - Также добавляете поддержку переопределения "корня" из поля ROOT в этом ini;
- *    если ROOT не указан — используете local_dav_default_storage_dir().
- *
- * Пример (псевдокод):
- *  define('LOCAL_DAV_INI_PATH', $inipath);
- *  define('LOCAL_DAV_STORAGE_PATH', local_dav_default_storage_dir());
- *  require __DIR__ . '/picodav/index.php';
- *  exit;
  */
+define('LOCAL_DAV_INI_PATH', $inipath);
+define('LOCAL_DAV_STORAGE_PATH', $storagedir);
+require __DIR__ . '/picodav/index.php';
+exit;
 
+
+/* 
 // Пока PicoDAV не подключён — выводим простую страничку с диагностикой.
 header('Content-Type: text/html; charset=utf-8');
 http_response_code(503);
@@ -53,4 +47,4 @@ code,pre{background:#1111; padding:2px 4px; border-radius:4px;}
 <p>Дальше: положите ваш PicoDAV в <code>local/dav/picodav/index.php</code> и раскомментируйте вызов лоадера в этом файле.</p>
 </body>
 </html>
-
+*/

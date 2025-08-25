@@ -1,9 +1,9 @@
 DirectoryIndex disabled
 
-RedirectMatch 404 \.picodav\.ini
+# RedirectMatch 404 \.picodav\.ini
 
 RewriteEngine On
-RewriteBase /dav/
+RewriteBase /local/dav/
 
 # разрешить отдавать статические файлы напрямую:
 RewriteCond %{REQUEST_FILENAME} -f
@@ -15,4 +15,4 @@ RewriteRule ^ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f [OR]
 RewriteCond %{REQUEST_METHOD} !GET
 
-RewriteRule ^.*$ /dav/index.php [END]
+RewriteRule ^.*$ /local/dav/index.php [END]

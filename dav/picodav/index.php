@@ -1975,22 +1975,37 @@ namespace {
 		die('Invalid URL');
 	}
 
-	// Взятие корня для файлов из .picodav.ini
-	$config = parse_ini_file(__DIR__ . '/.picodav.ini', true);
+	// ==== Moodle integration override ====
+	// Если заданы константы от local_dav — используем их.
+	$config_file = defined('LOCAL_DAV_INI_PATH') ? LOCAL_DAV_INI_PATH : (__DIR__ . '/.picodav.ini');
 
-	// путь по умолчанию = текущая папка
-	$files_dir = __DIR__;
-	if (!empty($config['ROOT'])) {
-	    $files_dir = $config['ROOT'];
-	    // если указан относительный путь — сделаем его относительным к index.php
-	    if ($files_dir[0] !== '/' && $files_dir[1] !== ':') { // Windows C:\ check
-	        $files_dir = __DIR__ . '/' . $files_dir;
-	    }
+	/* // Прочитаем ini (если есть).
+	$config = [];
+	if (is_file($config_file)) {
+		$config = parse_ini_file($config_file, true, INI_SCANNER_RAW);
+	} */
+
+	// Определяем корень для файлов.
+	/* if (!empty($config['ROOT'])) {
+		// Если админ явно указал ROOT в ini — используем его.
+		$files_dir = $config['ROOT'];
+		if ($files_dir[0] !== '/' && $files_dir[1] !== ':') { // относительный путь → относительно ini-файла
+			$files_dir = dirname($config_file) . '/' . $files_dir;
+		}
+	} else */
+	if (defined('LOCAL_DAV_STORAGE_PATH')) {
+		// Иначе, если Moodle прокинул дефолтную папку
+		$files_dir = LOCAL_DAV_STORAGE_PATH;
+	} else {
+		// Фолбэк: текущая директория
+		$files_dir = __DIR__;
 	}
+	// ^^^^ Moodle integration override ^^^^
 
+	// $relative_uri = ltrim(substr($uri, strlen($base???)), '/');
 	$relative_uri = ltrim(substr($uri, strlen($root)), '/');
 
-	if (!empty($_SERVER['SERVER_SOFTWARE']) && stristr($_SERVER['SERVER_SOFTWARE'], 'apache') && !file_exists($self_dir . '/.htaccess')) {
+	if (!empty($_SERVER['SERVER_SOFTWARE']) && stristr($_SERVER['SERVER_SOFTWARE'], 'apache') && !file_exists($self_dir . '/.htaccess') && is_writable($self_dir)) {
 		file_put_contents($self_dir . '/.htaccess', str_replace('index.php', basename($self), 'DirectoryIndex disabled
 
 RedirectMatch 404 \\.picodav\\.ini
@@ -1998,7 +2013,7 @@ RedirectMatch 404 \\.picodav\\.ini
 RewriteEngine On
 RewriteBase /
 
-# Uncomment the following 2 lignes to make things a bit faster for
+# Uncomment the following 2 lines to make things a bit faster for
 # downloading files, AND you don\'t use PicoDAV users to manage access,
 # but a regular .htpasswd file and config for your web server.
 #RewriteCond %{REQUEST_FILENAME} !-f [OR]
@@ -2027,11 +2042,12 @@ RewriteRule ^.*$ /index.php [END]
 		$fp = fopen(__FILE__, 'r');
 
 		if ($relative_uri == '.webdav/webdav.js') {
-			fseek($fp, 55024, SEEK_SET);
+			$L = 58697;
+			fseek($fp, $L, SEEK_SET);
 			echo fread($fp, 27891);
 		}
 		else {
-			fseek($fp, 55024 + 27891, SEEK_SET);
+			fseek($fp, $L + 27891, SEEK_SET);
 			echo fread($fp, 7004);
 		}
 
@@ -2040,7 +2056,7 @@ RewriteRule ^.*$ /index.php [END]
 		exit;
 	}
 
-	$config_file = $self_dir . '/.picodav.ini';
+	// $config_file = $self_dir . '/.picodav.ini';
 	define('PicoDAV\INTERNAL_FILES', ['.picodav.ini', $self_dir, '.webdav/webdav.js', '.webdav/webdav.css']);
 
 	const DEFAULT_CONFIG = [
@@ -2106,6 +2122,7 @@ RewriteRule ^.*$ /index.php [END]
 	$dav = new Server();
 	$dav->setStorage($storage);
 
+	// $dav->setBaseURI($relative_uri);
 	$dav->setBaseURI($root);
 
 	if (!$dav->route($uri)) {
