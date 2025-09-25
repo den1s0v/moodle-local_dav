@@ -2,19 +2,13 @@
 
 /**
  * Обновить файл конфигурации при сохранении настроек плагина.
+ * Эта функция должна вызываться как callback при обновлении admin_setting (set_updatedcallback).
  * @return void
  */
 function local_dav_after_config() {
-    // global $CFG;
-    // $config = get_config('local_dav', 'picodavini');
-
-    // $datadir = $CFG->dataroot . '/local_dav';
-    // if (!file_exists($datadir)) {
-    //     mkdir($datadir, $CFG->directorypermissions, true);
-    // }
-
-    // file_put_contents($datadir . '/.picodav.ini', $config);
-
+    // This callback is attached to the admin setting and will write the
+    // .picodav.ini file only when the admin updates the textarea. That
+    // avoids rewriting the file on every request to /local/dav/index.php.
     local_dav_sync_ini_from_config();
 }
 
@@ -47,7 +41,8 @@ function local_dav_ini_path(): string {
 
 /**
  * Синхронизировать содержимое .picodav.ini из настроек Moodle в файл moodledata/local_dav/.picodav.ini
- * Вызывайте при каждом запросе к /local/dav/index.php — это дешёво и надёжно.
+ * Вызывать только при сохранении настроек (через local_dav_after_config).
+ * Возвращает путь к файлу ini.
  */
 function local_dav_sync_ini_from_config(): string {
     $cfgtext = (string) get_config('local_dav', 'picodavini');

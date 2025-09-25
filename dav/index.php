@@ -6,10 +6,12 @@ define('NO_OUTPUT_BUFFERING', true);
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 
-// Всегда держим .picodav.ini актуальным в moodledata/local_dav/.
-$inipath = local_dav_sync_ini_from_config();
+// Do NOT rewrite .picodav.ini on every request — it should be written only when
+// the admin updates the plugin settings. Use local_dav_after_config() as callback.
+// Get path to the existing ini file (it may or may not exist yet).
+$inipath = local_dav_ini_path();
 
-// На всякий случай подготовим дефолтный storage, если админ не указал ROOT в ini.
+// Prepare default storage dir if admin did not set ROOT in ini.
 $storagedir = local_dav_default_storage_dir();
 
 /**
