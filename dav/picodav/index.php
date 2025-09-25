@@ -1494,7 +1494,7 @@ namespace PicoDAV
 				return false;
 			}
 
-			if (preg_match('/\.(?:php\d?|phtml|phps)$|^\./i', $uri)) {
+			if (LOCAL_DAV_HIDE_PHP_FILES && preg_match('/\.(?:php\d?|phtml|phps)$|^\./i', $uri)) {
 				return false;
 			}
 
@@ -1979,21 +1979,20 @@ namespace {
 	// Если заданы константы от local_dav — используем их.
 	$config_file = defined('LOCAL_DAV_INI_PATH') ? LOCAL_DAV_INI_PATH : (__DIR__ . '/.picodav.ini');
 
-	/* // Прочитаем ini (если есть).
+	// Прочитаем ini (если есть).
 	$config = [];
 	if (is_file($config_file)) {
 		$config = parse_ini_file($config_file, true, INI_SCANNER_RAW);
-	} */
+	}
 
 	// Определяем корень для файлов.
-	/* if (!empty($config['ROOT'])) {
+	if(!empty($config['ROOT'])) {
 		// Если админ явно указал ROOT в ini — используем его.
 		$files_dir = $config['ROOT'];
 		if ($files_dir[0] !== '/' && $files_dir[1] !== ':') { // относительный путь → относительно ini-файла
 			$files_dir = dirname($config_file) . '/' . $files_dir;
 		}
-	} else */
-	if (defined('LOCAL_DAV_STORAGE_PATH')) {
+	} elseif (defined('LOCAL_DAV_STORAGE_PATH')) {
 		// Иначе, если Moodle прокинул дефолтную папку
 		$files_dir = LOCAL_DAV_STORAGE_PATH;
 	} else {
@@ -2026,10 +2025,9 @@ RewriteRule ^.*$ /index.php [END]
 	if ($relative_uri == '_webdav/webdav.js' || $relative_uri == '_webdav/webdav.css' 
 		// || $relative_uri[strlen($relative_uri)-1] != '/'  /// 
 	) {
-		// ///
+		//      ///
 		// echo '<br>';
 		// echo $relative_uri;
-		// echo '<br>';
 		// ///
 
 		http_response_code(200);

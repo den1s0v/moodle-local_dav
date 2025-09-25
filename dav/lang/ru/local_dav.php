@@ -6,14 +6,17 @@
 $string['pluginname'] = 'Local DAV (интеграция WebDAV)';
 $string['picodavini'] = 'Содержимое .picodav.ini';
 $string['picodavini_desc'] = 'Текст, который будет записан в файл moodledata/local_dav/.picodav.ini. Сюда можно вставить полный конфиг PicoDAV. Пример:
-```
-ANONYMOUS_READ = true
-ANONYMOUS_WRITE = false
-# ROOT = storage/dir```';
+<br>
+ANONYMOUS_READ = true<br>
+ANONYMOUS_WRITE = false<br>
+ROOT = storage/dir';
 $string['wherefiles_title'] = 'Пути и точка доступа';
 $string['wherefiles_desc'] = 'Точка входа WebDAV: <code>{$a->web}</code><br>
 Файл <code>.picodav.ini</code> сохраняется в <code>moodledata/local_dav/.picodav.ini</code>.<br>
 Если в ini не задан <code>ROOT</code>, файлы по умолчанию будут в <code>moodledata/local_dav/storage</code>.';
+
+$string['hide_sensitive_files'] = 'Скрывать файлы PHP';
+$string['hide_sensitive_files_desc'] = 'PHP-файлы и скрытые файлы должны быть скрыты от ненадежных пользователей.';
 
 // === Новые строки для инструкций и проверки ROOT ===
 $string['wherefiles_instr_title'] = 'Инструкция для клиентов WebDAV';

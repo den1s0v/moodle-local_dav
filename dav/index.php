@@ -13,6 +13,7 @@ $inipath = local_dav_ini_path();
 
 // Prepare default storage dir if admin did not set ROOT in ini.
 $storagedir = local_dav_default_storage_dir();
+$hide_php_files = get_config('local_dav', 'hide_sensitive_files');
 
 /**
  * ПОДКЛЮЧЕНИЕ PicoDAV 
@@ -20,5 +21,6 @@ $storagedir = local_dav_default_storage_dir();
  */
 define('LOCAL_DAV_INI_PATH', $inipath);
 define('LOCAL_DAV_STORAGE_PATH', $storagedir);
+define('LOCAL_DAV_HIDE_PHP_FILES', $hide_php_files);
 require __DIR__ . '/picodav/index.php';
 exit;

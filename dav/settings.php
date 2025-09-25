@@ -18,18 +18,28 @@ if ($hassiteconfig) {
     $setting_picodav->set_updatedcallback('local_dav_after_config');
     $settings->add($setting_picodav);
 
+    $setting = new admin_setting_configcheckbox(
+        'local_dav/hide_sensitive_files',
+        get_string('hide_sensitive_files', 'local_dav'),
+        get_string('hide_sensitive_files_desc', 'local_dav'),
+        1
+    );
+    $settings->add($setting);
+
     // Подсказка с путями и дополнительной информацией.
-    $weburl = $CFG->wwwroot . '/local/dav/index.php';
+    $weburl = $CFG->wwwroot . '/local/dav/';
     $where_desc = get_string('wherefiles_desc', 'local_dav', ['web' => $weburl]);
 
-    // Дополнительные инструкции для внешних клиентов и проверка ROOT (если задан).
+    // Заголовки и инструкции.
     $extra = '<h4>' . get_string('wherefiles_title', 'local_dav') . '</h4>';
     $extra .= '<p>' . $where_desc . '</p>';
 
     $extra .= '<h5>' . get_string('wherefiles_instr_title', 'local_dav') . '</h5>';
     $extra .= '<p>' . get_string('wherefiles_instr_text', 'local_dav') . '</p>';
+    $extra .= '<p>' . '<a target=_blank href="https://github.com/kd2org/picodav/blob/main/README.md#configuration">→ PicoDAV coniguration ←</a>' . '</p>';
 
     $extra .= '<h5>' . get_string('wherefiles_paths_title', 'local_dav') . '</h5>';
+    $extra .= '<p><code>$CFG->dirroot</code>: <code>' . $CFG->dirroot . '</code></p>';
     $extra .= '<p><code>$CFG->dataroot</code>: <code>' . $CFG->dataroot . '</code></p>';
     $extra .= '<p>Default plugin storage (if no <code>ROOT</code> in ini): <code>' .
         local_dav_default_storage_dir() . '</code></p>';
