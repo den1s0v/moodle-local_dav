@@ -2,6 +2,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+    require_once(__DIR__ . '/lib.php');
+
     $settings = new admin_settingpage('local_dav', get_string('pluginname', 'local_dav'));
 
     // Большое текстовое поле для .picodav.ini (хранится в config, но файл создаём в moodledata).
